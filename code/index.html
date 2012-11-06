@@ -1,28 +1,212 @@
 <html>
-<head>
-<title>Sample "Hello, World" Application</title>
-</head>
-<body bgcolor=white>
 
-<table border="0">
-<tr>
-<td>
-<img src="images/tomcat.gif">
-</td>
-<td>
-<h1>Sample "Hello, World" Application</h1>
-<p>This is the home page for a sample application used to illustrate the
-source directory organization of a web application utilizing the principles
-outlined in the Application Developer's Guide.
-</td>
-</tr>
-</table>
+	<head>
+	
+		<link rel="stylesheet" type="text/css" href="resources/style.css"/>
 
-<p>To prove that they work, you can execute either of the following links:
-<ul>
-<li>To a <a href="hello.jsp">JSP page</a>.
-<li>To a <a href="hello">servlet</a>.
-</ul>
+		<script type="text/javascript" src="resources/kat.js"></script>
+		<script type="text/javascript" src="resources/script.js"></script>
+	
+	</head>
 
-</body>
+	<body>
+	
+		<div id="bigSurface">
+			
+			<div class="leftSurface" id="leftSurface">
+			
+				<h1>WebBased Processing Manager</h1>
+				
+				 
+				<input type="button" id="loadButton" value="Load files"/>
+				<input type="file" id="theFile" value="get"/>
+				
+				<div class="options" id="options">
+				<br/>
+				<!--
+				<br/>
+					<div class="step2k">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Preprocessing</b>
+						<br/>
+						<form>
+						
+							<div class="option">
+								<input type="radio" name="preprocessing" value="1"/>Executable1
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="preprocessing" value="2"/>Executable2
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k1">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Binarization</b>
+						<br/>
+						<form>
+						
+							<div class="option">
+								<input type="radio" name="binarization" value="1"/>Executable3
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Layout</b>
+						<br/>
+						<form>
+							<div class="option">
+								<input type="radio" name="layout" value="1"/>Executable4
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="layout" value="2"/>Executable5
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="layout" value="2"/>Executable6
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k1">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Paging</b>
+						<br/>
+						<form>
+						
+							<div class="option">
+								<input type="radio" name="paging" value="1"/>Executable7
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="paging" value="2"/>Executable8
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>OCR</b>
+						<br/>
+						<form>
+						
+							<div class="option">
+								<input type="radio" name="OCR" value="1"/>Executable9
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k1">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Hierarchy</b>
+						<br/>
+						<form>
+							<div class="option">
+								<input type="radio" name="hierarchy" value="1"/>Executable10
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="hierarchy" value="2"/>Executable11
+							</div>
+							
+							<div class="option">
+								<input type="radio" name="hierarchy" value="2"/>Executable12
+							</div>
+							
+						</form>
+						
+					</div>
+					
+					<div class="step2k">
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>PDF-exporter</b>
+						<br/>
+						<form>
+							<div class="option">
+								<input type="radio" name="Preprocessing" value="1"/>Executable13
+							</div>
+						</form>
+						
+					</div>
+					
+					<br/>
+					<input type="button" id="send" value="Send workflow to server"/>
+				-->
+				</div>
+			
+			</div>
+			
+			<div class="rightSurface">
+			
+				<div class="thumbnails">
+					<div style="border:1px solid black;width:700px;height:180px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
+						<p>
+						<image class="thumb" src="resources/image1.jpg"/>
+						<image class="thumb" src="resources/image2.jpg"/>
+						<image class="thumb" src="resources/image3.jpg"/>
+						<image class="thumb" src="resources/image1.jpg"/>
+						<image class="thumb" src="resources/image2.jpg"/>
+						<image class="thumb" src="resources/image3.jpg"/>
+						</p>
+					</div>
+				
+				</div>
+				
+				<div style="border:1px solid black;width:100%;height:450px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
+					<textarea rows="20" class="ta">
+					
+Select files to start
+Select options
+Uploading files...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+Finished processing image1.jpg...
+Finished processing image2.jpg...
+Finished processing image3.jpg...
+Finished processing image4.jpg...
+Finished processing image5.jpg...
+
+Done!
+</textarea>
+			</div>
+			<center>
+			<input type="button"  id="loadButton" value="Download files"/>
+			
+			</center>
+			</div>
+		
+		</div>
+	
+	</body>
+	
 </html>

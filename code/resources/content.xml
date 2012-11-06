@@ -1,0 +1,18 @@
+<content>
+
+	<step name="Step1">
+		<option name="opt11"/>
+		<option name="opt12"/>
+		<option name="opt13"/>
+	</step>
+	
+	<step name="Step2">
+		<option name="opt21"/>
+	</step>
+	
+	<step name="Step3">
+		<option name="opt31"/>
+		<option name="opt32"/>
+	</step>
+
+</content>
