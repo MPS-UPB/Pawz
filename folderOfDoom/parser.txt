@@ -1,0 +1,1 @@
+Am implementat un parser de XSD-uri (mai trebuie adaugate cateva functionalitati). Urmeaza sa generez XML-uri pe baza datelor extrase. - Andreea
