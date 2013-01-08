@@ -1,0 +1,51 @@
+Parsare XSD in Java:
+	
+	Parsarea unei scheme XSD este asemanatoare cu parsarea unui XML si se poate face usor cu ajutorul bibliotecii com.sun.xml.xsom.
+	
+		- se creeaza un parser XSOM;
+		- se parseaza fisierul dat ca parametru;
+		- se extrage un set care contine schema.
+		
+		private void parse(File file){
+			try {
+				XSOMParser parser = new XSOMParser();
+				parser.parse(file);
+				this.schemaSet = parser.getResult();
+				this.xsSchema = this.schemaSet.getSchema(1);
+			}
+			catch (Exception exp) {
+				exp.printStackTrace(System.out);
+			}
+		}
+		
+		- se pot citi XSSimpleType si XSComplexType din schema rezultata mai sus (xsSchema):
+		XSComplexType ct = xsSchema.getComplexType(localCTName); 
+			- localCTName = numele din XML asociat tipului complex cautat
+		XSSimpleType st = xsSchema.getSimpleType(localSTName);
+			- localSTName = numele din XML asociat tipului simplu cautat
+			
+		- pentru a citi informatiile din tag-ul restriction, se foloseste clasa XSRestrictionSimpleClass
+		- pentru a citi elementele unui tip complex:
+		private void printElements(){
+			XSComplexType xsComplexType = xsSchema.getComplexType(localName);
+			XSContentType xsContentType = xsComplexType.getContentType();
+			XSParticle particle = xsContentType.asParticle();
+			if(particle != null){
+				XSTerm term = particle.getTerm();
+				if(term.isModelGroup()){
+					XSModelGroup xsModelGroup = term.asModelGroup();
+					XSParticle[] particles = xsModelGroup.getChildren();
+					for(XSParticle p : particles ){
+						XSTerm pterm = p.getTerm();
+						if(pterm.isElementDecl()){ //xs:element inside complex type
+							System.out.println(pterm);
+						}
+					}
+				}
+			}
+		}
+		
+		- biblioteca com.sun.xml.xsom poate realiza si parsarea tagurilor 'annotation', a atributelor tipurilor complexe, dar aceste taguri nu apar in xsd-urile oferite pentru proiect.
+		
+		Reference:
+			http://it.toolbox.com/blogs/enterprise-web-solutions/parsing-an-xsd-schema-in-java-32565

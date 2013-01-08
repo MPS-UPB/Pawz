@@ -1,0 +1,7 @@
+Pentru ca bibliotecile necesare parsarii XSD sa fie incluse in proiect:
+
+> Descarcare xsom.jar si relaxngDatatype.jar
+> Adaugare dependente in proiect:
+	> Click dreapta pe numele proiectului
+	> Selectare Java Build Path > Libraries
+	> Add External JARs > adauga xsom.jar si relaxngDatatype.jar
