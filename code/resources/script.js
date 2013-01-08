@@ -3,6 +3,19 @@
 	var steps = [];
 	var minStep, maxStep = -1;
 	
+	var holder = null,
+		//tests = {}, 
+		acceptedTypes = {
+							'image/png': true,
+							'image/jpeg': true,
+							'image/gif': true
+						},
+		//progress = null,
+		fileupload = null,
+		formData = null,
+		fileQueue = [];
+
+	
 	 //open xml file for reading and return dom structure
 	var readXMLFile = function( filename )
 	 {
@@ -20,15 +33,66 @@
 		return xmlhttp.responseXML;
 	}
 
+	function sendAJAX( args )
+	{
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		xmlhttp.onreadystatechange=function()
+		{
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if( !("after" in args) )
+				{
+					return;
+				}
+				
+				args.after( xmlhttp );
+			}
+		}
+		
+		xmlhttp.open( "POST", args.address, true);
+		xmlhttp.send( args.data );
+	}
+	
+	var stepHasASelectedOption = function( stepNr )
+	{
+		for( var i = 0; i < steps[stepNr].options.length; i++ )
+		{
+			if( !steps[stepNr].options[i].selected )
+			{
+				continue;
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	//behavior of an option
-	var processOption = function( optionDiv, args )
+	var processOption = function( args )
 	{
 		//deselect option
-		if( steps[args.step].selectedOption == args.option )
+		var optionObj = steps[args.step].options[args.option];
+		
+		if( optionObj.selected )
 		{
-			optionDiv.className = "option";
-			steps[args.step].selectedOption = -1;
+			optionObj.container.className = "option";
+			optionObj.selected = false;
 			
+			//reset parameters
+			for( var i = 0; i < optionObj.parameters.length; i++ )
+			{
+				optionObj.parameters[i].value = "";
+			}
 			
 			//adjust steps if needed
 			if( minStep == args.step )
@@ -37,7 +101,7 @@
 				
 				for( var i = args.step + 1; i < steps.length; i++ )
 				{
-					if( steps[i].selectedOption == -1 )
+					if( !stepHasASelectedOption( i ) )
 					{
 						continue;
 					}
@@ -53,7 +117,7 @@
 				
 				for( var i = args.step - 1; i >= 0; i-- )
 				{
-					if( steps[i].selectedOption == -1 )
+					if( !stepHasASelectedOption( i ) )
 					{
 						continue;
 					}
@@ -66,6 +130,24 @@
 			return;
 		}
 		
+		//check to see if similar option is selected
+		for( var i = 0; i < steps[ args.step ].options.length; i++ )
+		{
+			if( !steps[ args.step ].options[i].selected )
+			{
+				continue;
+			}
+			
+			if( steps[ args.step ].options[i].optionType == optionObj.optionType )
+			{
+				alert("Option with similar effect already selected");
+				
+				return;
+			}
+			
+			break;
+		}
+		
 		if( args.step > maxStep )
 		{
 			maxStep = args.step;
@@ -76,13 +158,8 @@
 			minStep = args.step;
 		}
 		
-		if(steps[args.step].selectedOption != -1)
-		{
-			steps[args.step].options[steps[args.step].selectedOption].className = "option";
-		}
-		
-		optionDiv.className = "selectedOption";
-		steps[args.step].selectedOption = args.option;
+		optionObj.container.className = "selectedOption";
+		optionObj.selected = true;
 	}
 	
 	//open xml file and use it to create menu
@@ -98,7 +175,7 @@
 			{
 				e.preventDefault();
 				
-				processOption( e.target, args )
+				processOption( args )
 			}, false);
 			
 			kat.addEvent( newDivOption, "dblclick", function(e)
@@ -107,6 +184,30 @@
 			}, false);
 		}
 		
+		var addEventToParameter = function( args )
+		{
+			kat.addEvent( args.paramObj, "click", function(e)
+			{
+				if( e.stopPropagation )
+				{
+					e.stopPropagation();
+				}
+				else
+				{
+					e.cancelBubble = true;
+				}
+				
+				if( steps[args.step].options[args.option].selected )
+				{
+					return;
+				}
+				
+				processOption({
+								step: args.step,
+								option: args.option
+							});
+			}, false);
+		}
 		
 		var xmlSteps = xmlDoc.getElementsByTagName("step");
 		minStep = xmlSteps.length;
@@ -121,9 +222,8 @@
 			newDivStepName.appendChild( document.createTextNode(xmlSteps[i].getAttribute("name") ) );
 			
 			steps[i] = {
-								selectedOption: -1,
-								options: []
-							};
+						options: []
+					};
 			
 			var xmlOptions = xmlSteps[i].getElementsByTagName("option");
 			//for each option of step
@@ -131,17 +231,173 @@
 			{
 				var newDivOption = kat.createElm("div", newDivStep);
 				newDivOption.appendChild( document.createTextNode( xmlOptions[j].getAttribute("name") ) );
+				kat.createElm( "br", newDivOption );
+				
+				var xmlParams = xmlOptions[j].getElementsByTagName("parameter");
+				//for each parameter of option
+				var newParams = [];
+				for( var k = 0; k < xmlParams.length; k++ )
+				{
+					newDivOption.appendChild( document.createTextNode(xmlParams[k].getAttribute("name")) );
+					var newParam = kat.createElm("input", newDivOption);
+					newParam.setAttribute( "type", "text" );
+					newParam.setAttribute( "name", xmlParams[k].getAttribute("name") );
+					addEventToParameter({
+											step: i,
+											option: j,
+											paramObj: newParam
+										});
+										
+					newParams.push(newParam);
+				}
+				
 				newDivOption.className = "option";
 				
 				addEventToOption({ 
-												step: i,
-												option: j
-											});
+									step: i,
+									option: j
+								});
 				
-				steps[i].options[j] = newDivOption;
+				steps[i].options[j] = {
+										selected: false,
+										optionName: xmlOptions[j].getAttribute("name"),
+										optionType: xmlOptions[j].getAttribute("type"),
+										container: newDivOption,
+										parameters: newParams
+									};
 			}
 		}
 	}
+	
+	var createWorkflowXML = function()
+	{
+		var workflow = document.createElement( "workflow" );
+		for( var i = minStep; i <= maxStep; i++ )
+		{
+			for( var j = 0; j < steps[i].options.length; j++ )
+			{
+				if( !steps[i].options[j].selected )
+				{
+					continue;
+				}
+				
+				var option = kat.createElm( "option", workflow );
+				option.setAttribute( "name", steps[i].options[j].optionName );
+				
+				for( var k = 0; k < steps[i].options[j].parameters.length; k++ )
+				{
+					if( steps[i].options[j].parameters[k].value == "" )
+					{
+						alert( "Parameter not filled in" );
+						
+						steps[i].options[j].parameters[k].focus();
+						
+						return null;
+					}
+					
+					var parameter = kat.createElm( "parameter", option );
+					parameter.setAttribute( "name", steps[i].options[j].parameters[k].getAttribute("name") );
+					parameter.innerHTML = steps[i].options[j].parameters[k].value;
+				}
+			}
+		}
+		
+		return workflow;
+	}
+	
+	/*
+	var previewFile = function(file)
+	{
+		if(	tests.filereader === true
+			&& acceptedTypes[file.type] === true
+		)
+		{
+			var reader = new FileReader();
+			reader.onload = function (event)
+			{
+				var image = new Image();
+				image.src = event.target.result;
+				image.width = 120; // a fake resize
+				holder.appendChild(image);
+			}
+
+			reader.readAsDataURL(file);
+		} 
+		else
+		{
+			holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.size ? (file.size/1024|0) + 'K' : '');
+			console.log(file);
+		}
+	}*/
+	
+	var showFileInList = function (ev)
+	{
+        var file = ev.target.file;
+        if (file)
+		{
+            var image = new Image();
+			image.src = ev.target.result;
+			image.width = 120; // a fake resize
+			holder.appendChild(image);
+			
+            fileQueue.push({
+                file : file,
+            });
+        }
+    }
+	
+	var readImageFiles = function(files)
+	{
+		//debugger;
+        for (var i = 0; i < files.length; i++)
+		{
+			if( acceptedTypes[files[i].type] === false )
+			{
+				continue;
+			}
+            var fr = new FileReader();
+            fr.file = files[i];
+            fr.onloadend = showFileInList;
+            fr.readAsDataURL(files[i]);
+        }
+	}
+	
+	var uploadImageFile = function (file) {
+        if (file) {
+            var xhr = new XMLHttpRequest(),
+                upload = xhr.upload;
+            upload.addEventListener("progress", function (ev) {
+                if (ev.lengthComputable) {
+                    
+                }
+            }, false);
+            upload.addEventListener("load", function (ev) {
+               
+            }, false);
+            upload.addEventListener("error", function (ev) {console.log(ev);}, false);
+            xhr.open(
+                "POST",
+                "upload.php"
+            );
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.setRequestHeader("X-File-Name", file.name);
+            xhr.send(file);
+        }
+    }
+	
+	var sendImages = function()
+	{
+		// now post a new XHR request
+		console.log("sending");
+		
+		while (fileQueue.length > 0) {
+            var item = fileQueue.pop();
+            
+            uploadImageFile(item.file);
+        }
+	}
+	
 	
 	//window loaded
 	window.onload = function()
@@ -187,7 +443,24 @@
 				return;
 			}
 			
-			alert("All ok");
+			var workflow = createWorkflowXML();
+			
+			if( !workflow )
+			{
+				return;
+			}
+			
+			console.log( workflow );
+			/*
+			sendAJAX({
+						address: "",
+						data: (new XMLSerializer()).serializeToString(workflow)
+						after: function()
+						{
+							for(  )
+						}
+					});
+			*/
 		}, false);
 		
 		
@@ -198,5 +471,56 @@
 			{
 				console.log( minStep, maxStep );
 			}
+			if( e.keyCode == 98 )//a
+			{
+				sendImages();
+			}
 		}, false);
+		
+		
+		//D&D upload
+		holder = document.getElementById('holder');
+		holder.ondrop = function (e)
+		{
+			e.preventDefault();
+			readImageFiles(e.dataTransfer.files);
+		}
+		/*
+		tests = {
+					filereader: typeof FileReader != 'undefined',
+					dnd: 'draggable' in document.createElement('span'),
+					formdata: !!window.FormData,
+					progress: "upload" in new XMLHttpRequest
+				};
+		*/				
+		//progress = document.getElementById('uploadprogress');
+		fileupload = document.getElementById('upload');
+		
+		//formData = tests.formdata ? new FormData() : null;
+		/*
+		if (tests.dnd)
+		{ 
+			holder.ondragover = function ()
+			{
+				this.className = 'hover';
+				return false;
+			}
+			holder.ondragend = function ()
+			{
+				this.className = '';
+				return false;
+			}
+			
+		}
+		else
+		{
+			fileupload.className = 'hidden';
+			fileupload.querySelector('input').onchange = function ()
+			{
+				readImageFiles(this.files);
+			};
+		}
+		*/
+		
+		kat.getElm("fileField").onchange = this.readImageFiles;
 	}

@@ -1,18 +1,23 @@
 <content>
 
 	<step name="Step1">
-		<option name="opt11"/>
-		<option name="opt12"/>
-		<option name="opt13"/>
+		<option name="opt11" type="1"/>
+		<option name="opt12" type="1"/>
+		<option name="opt13" type="2"/>
 	</step>
 	
 	<step name="Step2">
-		<option name="opt21"/>
+		<option name="opt21" type="1">
+			<parameter name="param211"/>
+			<parameter name="param212"/>
+		</option>
 	</step>
 	
 	<step name="Step3">
-		<option name="opt31"/>
-		<option name="opt32"/>
+		<option name="opt31" type="1">
+			<parameter name="param311"/>
+		</option>
+		<option name="opt32" type="2"/>
 	</step>
 
 </content>

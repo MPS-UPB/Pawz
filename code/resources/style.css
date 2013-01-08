@@ -87,6 +87,11 @@
 		background-color: #ede0e0;
 	}
 	
+	.option input
+	{
+		display: block;
+	}
+	
 	.selectedOption
 	{
 		border: 1px solid black;
@@ -96,4 +101,9 @@
 	.sendButton
 	{
 		margin-top: 20px;
+	}
+	
+	.hidden
+	{
+		display: none;
 	}

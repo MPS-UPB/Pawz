@@ -151,9 +151,15 @@
 			</div>
 			
 			<div class="rightSurface">
-			
+				<!--
+				<p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
+				-->
+				<form action="" method="post" enctype="multipart/form-data">
+					<input type="file" id="fileField" name="fileField" multiple />
+				</form>
+				
 				<div class="thumbnails">
-					<div style="border:1px solid black;width:700px;height:180px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
+					<div id="holder" style="border:1px solid black;width:700px;height:180px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
 						<p>
 						<image class="thumb" src="resources/image1.jpg"/>
 						<image class="thumb" src="resources/image2.jpg"/>
