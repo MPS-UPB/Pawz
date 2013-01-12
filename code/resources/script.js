@@ -15,7 +15,7 @@
 		formData = null,
 		fileQueue = [];
 
-	
+	/*
 	 //open xml file for reading and return dom structure
 	var readXMLFile = function( filename )
 	 {
@@ -32,7 +32,8 @@
 		
 		return xmlhttp.responseXML;
 	}
-
+	*/
+	
 	function sendAJAX( args )
 	{
 		var xmlhttp;
@@ -137,14 +138,14 @@
 			{
 				continue;
 			}
-			
+			/*
 			if( steps[ args.step ].options[i].optionType == optionObj.optionType )
 			{
 				alert("Option with similar effect already selected");
 				
 				return;
 			}
-			
+			*/
 			break;
 		}
 		
@@ -165,108 +166,115 @@
 	//open xml file and use it to create menu
 	var setupStepsAndOptions = function()
 	{
-		var xmlDoc = readXMLFile( "resources/content.xml" );
-		
-		var optionsDiv = kat.getElm("options");
-		
-		var addEventToOption = function( args )
-		{
-			kat.addEvent( newDivOption, "click", function(e)
-			{
-				e.preventDefault();
-				
-				processOption( args )
-			}, false);
-			
-			kat.addEvent( newDivOption, "dblclick", function(e)
-			{
-				e.preventDefault();
-			}, false);
-		}
-		
-		var addEventToParameter = function( args )
-		{
-			kat.addEvent( args.paramObj, "click", function(e)
-			{
-				if( e.stopPropagation )
-				{
-					e.stopPropagation();
-				}
-				else
-				{
-					e.cancelBubble = true;
-				}
-				
-				if( steps[args.step].options[args.option].selected )
-				{
-					return;
-				}
-				
-				processOption({
-								step: args.step,
-								option: args.option
-							});
-			}, false);
-		}
-		
-		var xmlSteps = xmlDoc.getElementsByTagName("step");
-		minStep = xmlSteps.length;
-		//for each step
-		for( var i = 0; i < xmlSteps.length; i++ )
-		{
-			var newDivStep = kat.createElm("div", optionsDiv);
-			newDivStep.className = "step";
-			
-			var newDivStepName = kat.createElm("div", newDivStep);
-			newDivStepName.className = "stepName"
-			newDivStepName.appendChild( document.createTextNode(xmlSteps[i].getAttribute("name") ) );
-			
-			steps[i] = {
-						options: []
-					};
-			
-			var xmlOptions = xmlSteps[i].getElementsByTagName("option");
-			//for each option of step
-			for( var j = 0; j < xmlOptions.length; j++ )
-			{
-				var newDivOption = kat.createElm("div", newDivStep);
-				newDivOption.appendChild( document.createTextNode( xmlOptions[j].getAttribute("name") ) );
-				kat.createElm( "br", newDivOption );
-				
-				var xmlParams = xmlOptions[j].getElementsByTagName("parameter");
-				//for each parameter of option
-				var newParams = [];
-				for( var k = 0; k < xmlParams.length; k++ )
-				{
-					newDivOption.appendChild( document.createTextNode(xmlParams[k].getAttribute("name")) );
-					var newParam = kat.createElm("input", newDivOption);
-					newParam.setAttribute( "type", "text" );
-					newParam.setAttribute( "name", xmlParams[k].getAttribute("name") );
-					addEventToParameter({
-											step: i,
-											option: j,
-											paramObj: newParam
-										});
-										
-					newParams.push(newParam);
-				}
-				
-				newDivOption.className = "option";
-				
-				addEventToOption({ 
-									step: i,
-									option: j
-								});
-				
-				steps[i].options[j] = {
-										selected: false,
-										optionName: xmlOptions[j].getAttribute("name"),
-										optionType: xmlOptions[j].getAttribute("type"),
-										container: newDivOption,
-										parameters: newParams
+		sendAJAX({ 
+					address: "http://localhost/Paws/configFile.xml"
+					data: "command=getInitConfig"
+					after: function( xmlhttp )
+					{
+						var xmlDoc = xmlhttp.responseXML;
+						
+						var optionsDiv = kat.getElm("options");
+
+						var addEventToOption = function( args )
+						{
+							kat.addEvent( newDivOption, "click", function(e)
+							{
+								e.preventDefault();
+								
+								processOption( args )
+							}, false);
+							
+							kat.addEvent( newDivOption, "dblclick", function(e)
+							{
+								e.preventDefault();
+							}, false);
+						}
+						
+						var addEventToParameter = function( args )
+						{
+							kat.addEvent( args.paramObj, "click", function(e)
+							{
+								if( e.stopPropagation )
+								{
+									e.stopPropagation();
+								}
+								else
+								{
+									e.cancelBubble = true;
+								}
+								
+								if( steps[args.step].options[args.option].selected )
+								{
+									return;
+								}
+								
+								processOption({
+												step: args.step,
+												option: args.option
+											});
+							}, false);
+						}
+						
+						var xmlSteps = xmlDoc.getElementsByTagName("execType");
+						minStep = xmlSteps.length;
+						//for each step
+						for( var i = 0; i < xmlSteps.length; i++ )
+						{
+							var newDivStep = kat.createElm("div", optionsDiv);
+							newDivStep.className = "step";
+							
+							var newDivStepName = kat.createElm("div", newDivStep);
+							newDivStepName.className = "stepName"
+							newDivStepName.appendChild( document.createTextNode(xmlSteps[i].getAttribute("name") ) );
+							
+							steps[i] = {
+										options: []
 									};
-			}
-		}
+							
+							var xmlOptions = xmlSteps[i].getElementsByTagName("execName");
+							//for each option of step
+							for( var j = 0; j < xmlOptions.length; j++ )
+							{
+								var newDivOption = kat.createElm("div", newDivStep);
+								newDivOption.appendChild( document.createTextNode( xmlOptions[j].getAttribute("name") ) );
+								kat.createElm( "br", newDivOption );
+								
+								var xmlParams = xmlOptions[j].getElementsByTagName("parameter");
+								//for each parameter of option
+								var newParams = [];
+								for( var k = 0; k < xmlParams.length; k++ )
+								{
+									newDivOption.appendChild( document.createTextNode(xmlParams[k].getAttribute("name")) );
+									var newParam = kat.createElm("input", newDivOption);
+									newParam.setAttribute( "type", "text" );
+									newParam.setAttribute( "name", xmlParams[k].getAttribute("name") );
+									addEventToParameter({
+															step: i,
+															option: j,
+															paramObj: newParam
+														});
+														
+									newParams.push(newParam);
+								}
+								
+								newDivOption.className = "option";
+								
+								addEventToOption({ 
+													step: i,
+													option: j
+												});
+								
+								steps[i].options[j] = {
+														selected: false,
+														optionName: xmlOptions[j].getAttribute("name"),
+														//optionType: xmlOptions[j].getAttribute("type"),
+														container: newDivOption,
+														parameters: newParams
+													};
+							}
+						}
+					}
+				});
 	}
 	
 	var createWorkflowXML = function()
@@ -282,7 +290,10 @@
 				}
 				
 				var option = kat.createElm( "option", workflow );
-				option.setAttribute( "name", steps[i].options[j].optionName );
+				//option.setAttribute( "name", steps[i].options[j].optionName );
+				
+				var optionName = kat.createElm( "optionName", option );
+				optionName.innerHTML = steps[i].options[j].optionName;
 				
 				for( var k = 0; k < steps[i].options[j].parameters.length; k++ )
 				{
@@ -296,8 +307,8 @@
 					}
 					
 					var parameter = kat.createElm( "parameter", option );
-					parameter.setAttribute( "name", steps[i].options[j].parameters[k].getAttribute("name") );
-					parameter.innerHTML = steps[i].options[j].parameters[k].value;
+					//parameter.setAttribute( "name", steps[i].options[j].parameters[k].getAttribute("name") );
+					parameter.innerHTML = steps[i].options[j].parameters[k].getAttribute("name") + ', ' + steps[i].options[j].parameters[k].value;
 				}
 			}
 		}
