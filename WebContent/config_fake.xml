@@ -1,0 +1,35 @@
+<config>
+	<execType name="support">
+		<execName name="crop.exe">
+			<parameter name="top" type="integer" />
+			<parameter name="bottom" type="integer" />
+			<parameter name="left" type="integer" />
+			<parameter name="right" type="integer" />
+		</execName>
+		<execName name="rotate.exe">
+			<parameter name="angle" type="dectype" />
+		</execName>
+	</execType>
+	<execType name="crop">
+		<execName name="crop.exe">
+			<parameter name="top" type="integer" />
+			<parameter name="bottom" type="integer" />
+			<parameter name="left" type="integer" />
+			<parameter name="right" type="integer" />
+		</execName>
+	</execType>
+	<execType name="hierarchy">
+		<execName name="mock_hierarchy.exe" />
+	</execType>
+	<execType name="layout">
+		<execName name="mock_layout.exe" />
+	</execType>
+	<execType name="binarization">
+		<execName name="otsu.exe" />
+	</execType>
+	<execType name="rotate">
+		<execName name="rotate.exe">
+			<parameter name="angle" type="dectype" />
+		</execName>
+	</execType>
+</config>

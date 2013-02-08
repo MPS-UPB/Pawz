@@ -1,0 +1,92 @@
+<html>
+
+	<head>
+	
+		<link rel="stylesheet" type="text/css" href="resources/style.css"/>
+
+		<script type="text/javascript" src="resources/config.js"></script>
+		<script type="text/javascript" src="resources/kat.js"></script>
+		<script type="text/javascript" src="resources/FileAPI.js"></script>
+		<script type="text/javascript" src="resources/script.js"></script>
+	
+	</head>
+
+	<body>
+	
+		<div id="bigSurface">
+			
+			<div class="leftSurface" id="leftSurface">
+			
+				<h1>WebBased Processing Manager</h1>
+				
+				<div class="options" id="options">
+				<br/>
+				
+				</div>
+			
+			</div>
+			
+			<div class="rightSurface">
+				<!--
+				<p id="upload" class="hidden"><label>Drag &amp; drop not supported, but you can still upload via this input field:<br><input type="file"></label></p>
+				-->
+				<form action="" method="post" enctype="multipart/form-data">
+					<input type="file" id="fileField" name="fileField" multiple />
+				</form>
+				<a id="reset" href="#" title="Remove all files from list">Clear list</a>
+                <a id="upload" href="#" title="Upload all files in list">Upload files</a>
+				
+				<div class="thumbnails">
+					<div id="holder" style="border:1px solid black;width:700px;height:180px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
+						<p>
+							<image class="thumb" src="resources/image1.jpg"/>
+							
+						</p>
+					</div>
+				
+				</div>
+				
+				<div style="border:1px solid black;width:100%;height:450px;overflow:scroll;overflow-y:scroll;overflow-x:hidden;">
+					<textarea rows="20" class="ta">
+					
+Select files to start
+Select options
+Uploading files...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+...
+Finished processing image1.jpg...
+Finished processing image2.jpg...
+Finished processing image3.jpg...
+Finished processing image4.jpg...
+Finished processing image5.jpg...
+
+Done!
+</textarea>
+			</div>
+			<center>
+			<input type="button"  id="downloadButton" value="Download files"/>
+			
+			</center>
+			</div>
+		
+		</div>
+	
+	</body>
+	
+</html>

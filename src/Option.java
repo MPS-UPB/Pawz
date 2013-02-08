@@ -9,14 +9,15 @@ class Option{
 	HashMap<String, String> params = new HashMap<String,String>();
 	//lista cu parametrii folositi
 	ArrayList<String> paramsList = new ArrayList<String>();
+	String sessionID;
 	
-	
-	Option(String name, HashMap<String, String> map, ArrayList<String> list){
+	Option(String name, HashMap<String, String> map, ArrayList<String> list, String ID){
 		this.name=name;
 		for (String key:list){
 			//System.out.println(key);
 			this.paramsList.add(key);
 			this.params.put(key, map.get(key));
+			this.sessionID=ID;
 		}
 	}
 

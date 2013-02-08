@@ -18,11 +18,13 @@ public class XMLGenerator {
     DocumentBuilderFactory dbfac;
     DocumentBuilder docBuilder;
     Document doc;
+    ArrayList <String> execsWithMultipleInputFiles;
     
     public XMLGenerator() throws ParserConfigurationException {
     	dbfac = DocumentBuilderFactory.newInstance();
     	docBuilder = dbfac.newDocumentBuilder();
     	doc = docBuilder.newDocument();
+    	execsWithMultipleInputFiles = new ArrayList<String>();
     }
         
     public String getXMLString(ArrayList<String> files) {
@@ -53,9 +55,8 @@ public class XMLGenerator {
 					particleHash.put(execTypeVal[j], particleArr);
 				}
 			}
-			
 		}
-
+		
 		try {
             //create the root element and add it to the document
             Element root = doc.createElement("config");
@@ -73,7 +74,36 @@ public class XMLGenerator {
             	for (int j = 0; j < parsers.size(); j++) {
                     Element execNameElem = doc.createElement("execName");
                     String value = parsers.get(j).getExecName();
+                    String alternativeExecs = "";
+                    
+                    for (int k = 0; k < parsers.size(); k++) {
+                        String[] execTypeVal1 = parsers.get(j).getExecType().split(",");
+                        String[] execTypeVal2 = parsers.get(k).getExecType().split(",");
+                    	
+                        boolean alternative = true;
+                        
+                        for (int ii = 0; ii < execTypeVal1.length; ii++) {
+                    		boolean found = false;
+                        	for (int jj = 0; jj < execTypeVal2.length; jj++) {
+                        		if (execTypeVal1[ii].equals(execTypeVal2[jj]))
+                        			found = true;
+                        	}
+                        	if (found == false) {
+                        		ii = execTypeVal1.length;
+                        		alternative = false;
+                        	}
+                        }
+                        
+                        if (alternative == true && j != k) {
+                        	if (alternativeExecs != "") 
+                        		alternativeExecs += ",";
+                    		alternativeExecs += parsers.get(k).getExecName();
+                        }
+                    }
                     execNameElem.setAttribute("name", value);
+                    
+                    if (alternativeExecs != "")
+                    	execNameElem.setAttribute("alternatives", alternativeExecs);
                     execTypeElem.appendChild(execNameElem);
                     String propertyName = null;
             		String propertyType = null;
@@ -87,6 +117,9 @@ public class XMLGenerator {
             			else 
             				propertyType = pTerm.asElementDecl().getType().getBaseType().getName();
             			
+            			if (propertyName.compareTo("inputFile") == 0) {
+            				execsWithMultipleInputFiles.add(parsers.get(j).getExecName());
+            			}
             			if (propertyName.compareTo("execInfo") != 0 
             				&& propertyName.compareTo("inputFile") != 0
             				&& propertyName.compareTo("outputFile") != 0) {
@@ -115,6 +148,7 @@ public class XMLGenerator {
         } catch (Exception e) {
             System.out.println(e);
         }
+		Utils.execsWithMultipleInputFiles.addAll(execsWithMultipleInputFiles);
         return xmlString;
     }
 }

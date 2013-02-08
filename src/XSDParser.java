@@ -3,7 +3,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import com.sun.xml.xsom.*;
-import com.sun.xml.xsom.parser.XSOMParser;
+import com.sun.xml.xsom.parser.*;
 
 public class XSDParser {
 
